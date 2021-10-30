@@ -38,7 +38,7 @@ The file prefetcher.h pre-defines four functions that must be implemented:
 The prefetcher is called only from the main.C file.
 While you are free to examine all parts of the provided memory system, the only modifications you should make is to the prefetching interface contained in the files prefetcher.h and prefetcher.C. The only source code you will be submitting are these two files.
 
-To aid in your understanding of the prefetcher interface, we have provided a sample prefetcher implementation. This simple prefetcher waits for misses on the D-cache and then tries to prefetch the next block in memory. You can download the sample here: sample-pf.tar.gz.
+To aid in your understanding of the prefetcher interface, we have provided a sample prefetcher implementation. This simple prefetcher waits for misses on the D-cache and then tries to prefetch the next block in memory. You can find the sample prefetcher in the following location of the repo:  https://github.com/hungweitseng/CS203-fa21-prefetcher/tree/main/sample-pf.
 
 ## Constraints on Prefetcher:
 In addition to the constraint that only a single request can be serviced per cycle, you will have one further constraint: the amount of state saved in the prefetcher. The amount of state saved in the prefetcher may not exceed 4KB. Your source code must clearly indicate which variables are used as state. Furthermore, you will need to provide a detailed accounting in your project report of how much state is kept.
@@ -64,23 +64,10 @@ The memory system provided will output several statistics about the performance 
 These stats will be placed in the file mem.trace.out, where mem.trace was the input file used.
 
 ## Trace File
-Average Memory Access Time will be used for comparisons of your prefetcher to the baseline and your colleagues' prefetchers. For your report, you should test your prefetcher on traces available here: proj1-traces.tar.gz. However, TA will test your prefetcher with another set of memory traces for the prefetching competition. Please consider making your design working for general cases. In addition, if TA cannot reproduce the experimental result in your report, your project will be considered as fail.
+Average Memory Access Time will be used for comparisons of your prefetcher to the baseline and your colleagues' prefetchers. For your report, you should test your prefetcher on traces available here: https://github.com/hungweitseng/CS203-fa21-prefetcher/tree/main/traces
+. However, TA will test your prefetcher with another set of memory traces for the prefetching competition. Please consider making your design working for general cases. In addition, if TA cannot reproduce the experimental result in your report, your project will be considered as fail.
 
 You may wish to extend the simulator to collect more stats. This is not required, and your prefetcher should not depend on these modifications.
-
-While you will not be required to generate trace files for this project, you may wish to generate them to more thoroughly test your prefetcher's performance. A Pintool, named memtracer, that will produce trace files of the format required for this project is available here: memtracer2.tar.gz (Thanks to Sat, the 240A TA of 2007 Fall). Pin is a dynamic binary instrumentation tool that is free to use. While you won't be expected to know much about Pin, you can download it as well as find the manual here. You should use the Rev. 23100 release (12/03/2008).
-The usage of pin tool is simple. After downloading and untarring Pin, there will be a directory named "Bin" where the pin executable will reside. Although you can place the memtracer pintool from any directory, it is probably easiest if you copy it to that "Bin" directory. From within the "Bin" directory, you can then run the following command:
-
-./pin -t memtracer [-skip s] [-length l] -- /path/to/program
-
-The skip and length field are optional and are used to skip the first s instruction and to run for only l instructions. For example, if you wanted to instrument the "ls" program (which resides in /bin/ls on most Linux systems) but wanted to skip the first 100 instructions and only instrument 500 instructions you would run the command: ./pin -t memtracer -skip 100 -length 500 -- /bin/ls
-
-Please note that you will likely want to use the skip option when generating traces. This will allow you to skip over the loading of shared libraries and other things that are not part of the functionality of the program you are running. Including this startup process in your trace file will skew the behavior of your cache.
-
-After running the memtracer tool, you will be left with a file named "mem.trace" that you can then give to your cache simulator. While Pin can instrument any binary executable file (including Firefox... with some finessing), it adds a lot of overhead so be patient when attempting to instrument large programs. The memtracer tool limits the number of memory accesses that it logs to 2M so you don't need to worry about accidentally filling up your hard disk with the trace file on a large program.
-
-While you are free to use any program that you wish, we suggest the following (which should be available on almost any Linux system you use): grep, djpeg, cjpeg, ps2pdf, gcc, gunzip, gzip, bzip2, bunzip2, tar, md5sum, perl, m4, cpp, sort, diff, ppmdither, java, javac, latex, python, uuencode, enscript
-You can find out find out more about using these programs by looking at their man files (e.g. man djpeg).
 
 ## Collaboration
 You should feel free to discuss the project with others in the class including sharing detailed performance results of your predictor. Sharing code is expressly forbidden.
@@ -88,19 +75,19 @@ You should feel free to discuss the project with others in the class including s
 ## Prefetcher starting points
 Here are some papers to get you thinking about different approaches to prefetching. You are not required to choose an algorithm from these papers, but they can provide some useful starting thoughts. Their bibliographies will provide pointer to other papers on the topic.
 
-- Spectral prefetcher: An effective mechanism for L2 cache prefetching
-- A stateless, content-directed data prefetching mechanism
-- Prefetching using Markov predictors
-- Memory Prefetching Using Adaptive Stream Detection
-- Reducing memory latency via non-blocking and prefetching caches
+- Spectral prefetcher: An effective mechanism for L2 cache prefetching http://prod.tinker.cc.gatech.edu/journal/spectral.pdf
+- A stateless, content-directed data prefetching mechanism https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.442.3212&rep=rep1&type=pdf
+- Prefetching using Markov predictors https://ieeexplore.ieee.org/document/752653/
+- Memory Prefetching Using Adaptive Stream Detection https://www.cs.utexas.edu/~lin/papers/micro06.pdf
+- Reducing memory latency via non-blocking and prefetching caches https://dl.acm.org/doi/10.1145/143371.143486
 
 ## Evaluation
 Your grade for the project will be based on your write up the prefetcher you implemented. The performance of your prefetcher is less important than your discussion of how the prefetcher works and why it performs the way it does.
 
 ## Compilation and Execution Environment:
-Your simulator should be written in either C or C++. It should compile and run on a Red Hat Enterprise Linux machine using gcc (if written in C) or g++ (for C++) version 3.4.6. CSE grad students have access to this type of environment by using one of the computers in the APE lab. More info on accessing the APE lab computers can be found here. For those who cannot access these computers (likely CSE undergrads and ECE students), you can request access by filling out the form located here.
+Your simulator should be written in either C or C++. It should compile and run on a Red Hat Enterprise Linux machine using gcc (if written in C) or g++ (for C++). CSE grad students have access to this type of environment by using sledge.cs.ucr.edu. For those who cannot access these computers (likely CSE undergrads and ECE students), you can request access to CSE Systems.
 
-For those of you unfamiliar with developing in the linux environment, you can check out this basic tutorial on compiling using gcc (or g++). For those of you that are rusty with your C++, I would recommend this C++ reference site. Of course, the webboard is also a good place for more specific questions.
+For those of you unfamiliar with developing in the linux environment, you can check out this basic tutorial (https://www.classes.cs.uchicago.edu/archive/2017/winter/51081-1/LabFAQ/lab2/compile.html) on compiling using gcc (or g++). For those of you that are rusty with your C++, I would recommend this C++ reference site https://en.cppreference.com/w/. Of course, the webboard is also a good place for more specific questions.
 
 ## Fabulous PRIZES!!!
 The authors of the three top prefetcher (as measured by total run time) will receiver prizes. The prizes will be awarded in class on 12/1/2021.
