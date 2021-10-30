@@ -100,7 +100,7 @@ Your report for project will consist of the following sections:
 - Description of Prefetcher - One or two paragraphs describing the prefetching algorithm that you are using. If your prefetcher is based on an existing design, you must explicitly state the original source. While you are free to implement existing designs, failure to provide a citation will result in you receiving no credit for the project. Your description should include the rationale for the design, supported, where appropriate data evaluating "teaks" or changes you made to improve performance.
 - State Accounting - How much state your prefetcher uses as well as a detailed description of how and where the state is used. For example, if you have a prediction table, you should list its size as well as its layout.
 - AMAT Graph - A bar chart showing the average memory access time (AMAT) of your prefetcher on the provided traces.
-Your report should be in PDF format and have the following name:lastname_firstname_cse240a_wi10_project.pdf
+Your report should be in PDF format and have the following name:lastname_firstname_cs203_fa21_project.pdf
 - Source Code
 You only need to submit two source code files: prefetcher.h and prefetcher.C. Your prefetcher should be able to compile with the unmodified memory system that has been provided. The given system is written in C++ so your code should compile with the g++ command on the APE lab computers. This file should contain your name as well as your Student ID at the top.
 
