@@ -6,8 +6,9 @@
 In this project you will be working to implement a hardware prefectcher. You will be given a basic cache simulator with an interface to a prefetcher. Your task will be to implement the prefetcher interface with a prefetching algorithm of your own choice. The effectiveness of your prefetcher will be tested against a baseline prefetcher. You will also compete against your fellow classmates for amazing awards and prizes! Notice: The project should be done individually.
 
 ## Cache Configuration:
-Your prefetcher will work in the context of a well-defined memory hierarchy. The memory system is already implemented (in C++), and can be downloaded here: proj1-source.tar.gz. The Data Cache has the following stats:
+Your prefetcher will work in the context of a well-defined memory hierarchy. The memory system is already implemented (in C++), and can be downloaded here: proj1-source.tar.gz. 
 
+The Data Cache has the following stats:
 - 32KB Size
 - 2-way Set Associative
 - 16 byte line size
@@ -15,7 +16,8 @@ Your prefetcher will work in the context of a well-defined memory hierarchy. The
 - no-write-allocate
 - 1 cycle hit time
 - 10 entry write-buffer
-- A L2 cache (data only) has the following stats:
+
+A L2 cache (data only) has the following stats:
 - 256KB Size
 - 8-way set associative
 - 32 byte line size
