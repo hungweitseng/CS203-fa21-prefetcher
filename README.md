@@ -94,6 +94,11 @@ For those of you unfamiliar with developing in the linux environment, you can ch
 ## Fabulous PRIZES!!!
 The authors of the three top prefetcher (as measured by total run time) will receiver prizes. The prizes will be awarded in class on 12/1/2021.
 
+## Grading Rubrics
+- 20% Report
+- 20% If your code can compile
+- 60% Performance: we will use the given "sample prefetcher" as the baseline and measure the speedup (S) of your prefetcher. Your grade in the part is then evaluated as min((S-1),1). For example, if you get a speedup of 2, you will get full credits on this part.
+
 ## Deliverable
 
 ### Project Report
