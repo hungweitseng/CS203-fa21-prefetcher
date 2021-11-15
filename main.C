@@ -147,7 +147,8 @@ int main(int argc, char* argv[]) {
 			//printf("servicing the l2 queue on cycle %u (addr: %x)\n",curr_cycle,req.addr);
 
 			isHit = L2Cache.check(req.addr,req.load);
-			cpu.loadHitL2(isHit);
+			if (req.fromCPU)
+				cpu.loadHitL2(isHit);
 
 			if(isHit) {
 				DCache.access(req.addr,req.load); // update D cache
