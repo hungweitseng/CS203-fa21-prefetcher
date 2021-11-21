@@ -146,7 +146,8 @@ int main(int argc, char* argv[]) {
 			req = queueL2.getFront();
 
 			isHit = L2Cache.check(req.addr,req.load);
-			cpu.loadHitL2(isHit);
+			if (req.fromCPU)
+				cpu.loadHitL2(isHit);
 
 			if(isHit) {
 				DCache.access(req.addr,req.load); // update D cache
