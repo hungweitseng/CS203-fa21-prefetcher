@@ -67,7 +67,7 @@ bool memQueue::add(Request req, u_int32_t cycle) {
 
 		int dupLoc = findDup(tag,index); // see if there is a duplicate request (-1 = not found)
 
-		if(dupLoc == -1) { // no duplicate found
+		if(dupLoc == -1||_queue[dupLoc].fromCPU) { // no duplicate found
 			_queue[_rear] = req;
 			_tags[_rear] = tag;
 			_indexes[_rear] = index;

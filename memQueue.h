@@ -24,7 +24,6 @@ class memQueue {
 	u_int32_t* _readyTime; // the time when this entry will be ready
 	u_int32_t* _tags; // the time when this entry will be ready
 	u_int32_t* _indexes; // the time when this entry will be ready
-
 	// looks for a duplicate request in the queue... returns the queue location of the dup if there is one, -1 otherwise
 	int findDup(u_int32_t tag, u_int32_t index);
 

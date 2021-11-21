@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <math.h>
 
+double log2(double x)
+{
+	return log(x)/log(2);
+}
+
 Cache::Cache(u_int32_t numSets, u_int32_t assoc, u_int32_t blockSize, bool randRep, bool writeAlloc, bool writeThrough) {
 	_numSets = numSets;
 	_blockSize = blockSize;

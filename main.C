@@ -14,6 +14,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 int main(int argc, char* argv[]) {
 	if(argc != 2) {
@@ -80,17 +81,16 @@ int main(int argc, char* argv[]) {
 	bool isHit;
 
 	while(!cpu.isDone()) {
-		//if((curr_cycle << 25) == 0) printf("%u\n",curr_cycle);
 
 		isHit = false;
 
 		cpuState cpu_status = cpu.getStatus(curr_cycle);
 
-		//printf("%u %u\n",curr_cycle,cpu_status);
+//		printf("%u: %u\n",curr_cycle,cpu_status);
 
 		if(cpu_status == READY) { // request is ready
+				
 			req = cpu.issueRequest(curr_cycle);
-			if(!req.fromCPU) printf("houston, this sucks!\n");
 
 			// check for L1 hit
 			isHit = DCache.check(req.addr,req.load);
@@ -106,14 +106,13 @@ int main(int argc, char* argv[]) {
 			}
 			else if(req.load) {
 				nRequestsL2++;
-
-				if(queueL2.add(req,curr_cycle)) { /* printf("adding load req to L2 queue at cycle %u\n",curr_cycle); */ cpu.setStatus(WAITING); } // CPU is now "waiting" for response from L2/mem
+				if(queueL2.add(req,curr_cycle)) cpu.setStatus(WAITING); // CPU is now "waiting" for response from L2/mem
 				else cpu.setStatus(STALLED_L2); // no room in l2 queue so we are "stalled" on this request
 			}
-			else { // store miss
+			else { 
 				nRequestsL2++;
 
-				if (writeBuffer.add(req,curr_cycle)) { /*printf("adding store to writebuffer on cycle %u\n",curr_cycle); */ cpu.completeRequest(curr_cycle); }
+				if (writeBuffer.add(req,curr_cycle)) cpu.completeRequest(curr_cycle); 
 				else { // need to stall for an entry in the write buffer to open up
 					cpu.setStatus(STALLED_WB);
 				}
@@ -143,19 +142,16 @@ int main(int argc, char* argv[]) {
 
 		// service the L2 queue
 		if(queueL2.frontReady(curr_cycle)) { // check to see if the front element in the queue is ready
+			//printf("servicing the l2 queue on cycle %u\n",curr_cycle);
 			req = queueL2.getFront();
-			//printf("servicing the l2 queue on cycle %u (addr: %x)\n",curr_cycle,req.addr);
 
 			isHit = L2Cache.check(req.addr,req.load);
 			cpu.loadHitL2(isHit);
 
 			if(isHit) {
 				DCache.access(req.addr,req.load); // update D cache
-				L2Cache.access(req.addr,req.load); // update L2 cache
 				if(req.fromCPU) cpu.completeRequest(curr_cycle); // this request was from the CPU so update state to show we are done
 				queueL2.remove(); // remove this request from the queue
-
-				//if(req.addr == 0xbfeccff8) printf("bad request completed on cycle %u at addr %x!\n",curr_cycle,req.addr);
 			}
 			else {
 				if(queueMem.add(req,curr_cycle)) queueL2.remove(); // succesfully added to memory queue so we can remove it from L2 queue
@@ -164,13 +160,13 @@ int main(int argc, char* argv[]) {
 
 		// service the memory queue
 		if(queueMem.frontReady(curr_cycle)) {
+			//printf("servicing the mem queue on cycle %u\n",curr_cycle);
 			req = queueMem.getFront();
-			//printf("servicing the mem queue on cycle %u (EA: %x)\n",curr_cycle,req.addr);
 			queueMem.remove();
 
 			// update both L2 and D cache
 			L2Cache.access(req.addr,req.load);
-			if(req.load) DCache.access(req.addr,req.load); // only update D-cache if this is a load
+			if(req.load) DCache.access(req.addr,req.load); // only update if this is a load
 
 			if(req.fromCPU && req.load) cpu.completeRequest(curr_cycle);
 		}
@@ -193,7 +189,7 @@ int main(int argc, char* argv[]) {
 				writeBuffer.remove();
 			}
 			else { // L2 is write-allocate so we need to load data from memory first
-				if(queueMem.add(req,curr_cycle)) writeBuffer.remove(); 
+				if(queueMem.add(req,curr_cycle)) writeBuffer.remove(); // we can keep adding to the queue because we check for duplicates as part of add()
 			}
 		}
 
@@ -201,40 +197,41 @@ int main(int argc, char* argv[]) {
 	}
 
 	curr_cycle--; // just for stats sake
-
 	double avgMemQ = (double)memQsize / (double)curr_cycle;
 	double L2BW = (double)nRequestsL2 / (double)curr_cycle;
 	double memBW = (double)memCycles / (double)curr_cycle;
 
-	
-	printf("total run time: %u\n",curr_cycle);
-	printf("D-cache total hit rate: %f\n",cpu.getHitRateL1());
-	printf("L2 cache total hit rate: %f\n",cpu.getHitRateL2());
-	printf("AMAT: %f\n",cpu.getAMAT());
-	printf("Average Memory Queue Size: %f\n",avgMemQ);
-	printf("L2 BW Utilization: %f\n",L2BW);
-	printf("Memory BW Utilization: %f\n",memBW);
-	
+	fprintf(stderr, "total run time: %u\n",curr_cycle);
+	fprintf(stderr, "D-cache total hit rate: %f\n",cpu.getHitRateL1());
+	fprintf(stderr, "L2 cache total hit rate: %f\n",cpu.getHitRateL2());
+	fprintf(stderr, "AMAT: %f\n",cpu.getAMAT());
+	fprintf(stderr, "Average Memory Queue Size: %f\n",avgMemQ);
+	fprintf(stderr, "L2 BW Utilization: %f\n",L2BW);
+	fprintf(stderr, "Memory BW Utilization: %f\n",memBW);
 
 
 	// create output file name based on trace file name
-	char* outfile = (char *)malloc(sizeof(char)*(strlen(argv[1])+5));
-	strcpy(outfile,argv[1]);
-	strcat(outfile,".out");
+//	char* outfile = (char *)malloc(sizeof(char)*(strlen(argv[1])+5));
+//	strcpy(outfile,argv[1]);
+//	strcat(outfile,".out");
 
-	fp = fopen(outfile,"w"); // open outfile for writing
+//	fp = fopen(outfile,"w"); // open outfile for writing
+	fp = stdout;
+//	free(outfile);
 
-	free(outfile);
-/*
-	fprintf(fp,"%u\n",curr_cycle);
-	fprintf(fp,"%.4f\n",cpu.getHitRateL1());
-	fprintf(fp,"%.4f\n",cpu.getHitRateL2());
-	fprintf(fp,"%.4f\n",cpu.getAMAT());
-	fprintf(fp,"%.4f\n",avgMemQ);
-	fprintf(fp,"%.4f\n",L2BW);
-	fprintf(fp,"%.4f\n",memBW);
-*/
-	fclose(fp);
+//	fprintf(fp,"%u\t",curr_cycle);
+//	fprintf(fp,"%.4f\t",cpu.getHitRateL1());
+//	fprintf(fp,"%.4f\t",cpu.getHitRateL2());
+//	fprintf(fp,"%.4f\t",cpu.getAMAT());
+//	fprintf(fp,"%.4f\t",avgMemQ);
+//	fprintf(fp,"%.4f\t",L2BW);
+//	fprintf(fp,"%.4f\n",memBW);
+
+//	char command[80];
+//	sprintf(command, "cat /proc/%ld/rlimit",getpid());
+//	system(command);
+
+//	fclose(fp);
 
 	return 0;
 }
